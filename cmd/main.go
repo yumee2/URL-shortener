@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"url_shortener/internal/config"
+	"url_shortener/internal/storage/postgres"
 
 	"github.com/joho/godotenv"
 )
@@ -17,8 +18,16 @@ func main() {
 	godotenv.Load() // load dotenv file
 	cfg := config.MustLoad()
 
-	logger := createLogger(cfg.Env)
-	logger.Info("application has been started")
+	log := createLogger(cfg.Env)
+	log.Info("application has been started")
+
+	storage, err := postgres.New(cfg)
+	if err != nil {
+		log.Error("fail during loading the storage", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
+		os.Exit(1)
+	}
+
+	_ = storage
 }
 
 func createLogger(env string) *slog.Logger {
