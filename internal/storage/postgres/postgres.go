@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"url_shortener/internal/config"
 
-	_ "github.com/lib/pq"
+	"github.com/lib/pq"
 )
 
 type Storage struct {
@@ -36,4 +36,22 @@ func New(cfg *config.Config) (*Storage, error) {
 	}
 
 	return &Storage{db: db}, nil
+}
+
+func (s *Storage) SaveURL(urlToSave string, alias string) error {
+	const fn = "storage.postgres.SaveURL"
+
+	stmt, err := s.db.Prepare("INSERT INTO url(url, alias) VALUES($1, $2)")
+	if err != nil {
+		return fmt.Errorf("%s: %w", fn, err)
+	}
+
+	_, err = stmt.Exec(urlToSave, alias)
+	if pqErr, ok := err.(*pq.Error); ok {
+		if pqErr.Code == "23505" { // PostgreSQL unique violation error code
+			return fmt.Errorf("%s: duplicate entry - %w", fn, err)
+		}
+	}
+
+	return nil
 }
