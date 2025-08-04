@@ -55,3 +55,29 @@ func (s *Storage) SaveURL(urlToSave string, alias string) error {
 
 	return nil
 }
+
+func (s *Storage) GetURL(alias string) (string, error) {
+	const fn = "storage.postgres.GetURL"
+
+	var url string
+	err := s.db.QueryRow("SELECT url FROM url WHERE alias = $1", alias).Scan(&url)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", fmt.Errorf("%s: alias '%s' not found", fn, alias)
+		}
+		return "", fmt.Errorf("%s: %w", fn, err)
+	}
+
+	return url, nil
+}
+
+func (s *Storage) DeleteURL(alias string) error {
+	const fn = "storage.postgres.DeleteURL"
+
+	_, err := s.db.Exec(`DELETE FROM url WHERE alias = $1`, alias)
+	if err != nil {
+		return fmt.Errorf("%s: %w", fn, err)
+	}
+
+	return nil
+}
