@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"url_shortener/internal/config"
+	"url_shortener/internal/storage"
 
 	"github.com/lib/pq"
 )
@@ -49,7 +50,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) error {
 	_, err = stmt.Exec(urlToSave, alias)
 	if pqErr, ok := err.(*pq.Error); ok {
 		if pqErr.Code == "23505" { // PostgreSQL unique violation error code
-			return fmt.Errorf("%s: duplicate entry - %w", fn, err)
+			return fmt.Errorf("%s: duplicate entry - %w", fn, storage.ErrURLExist)
 		}
 	}
 
@@ -63,7 +64,7 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	err := s.db.QueryRow("SELECT url FROM url WHERE alias = $1", alias).Scan(&url)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("%s: alias '%s' not found", fn, alias)
+			return "", storage.ErrURLNotFound
 		}
 		return "", fmt.Errorf("%s: %w", fn, err)
 	}
