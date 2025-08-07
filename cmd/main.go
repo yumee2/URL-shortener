@@ -52,7 +52,7 @@ func createLogger(env string) *slog.Logger {
 
 func setupRouter(storage postgres.Storage, log *slog.Logger) *gin.Engine {
 	r := gin.Default()
-	urlService := services.NewURLService(storage, log)
+	urlService := services.NewURLService(&storage, log)
 	urlController := controllers.NewURLController(urlService, log)
 
 	routers.SetupURLRoutes(r, urlController)

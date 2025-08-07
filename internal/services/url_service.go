@@ -14,12 +14,12 @@ type UrlService interface {
 }
 
 type urlService struct {
-	urlStorage *postgres.Storage
+	urlStorage postgres.URLStorage
 	log        *slog.Logger
 }
 
-func NewURLService(storage postgres.Storage, logger *slog.Logger) UrlService {
-	return &urlService{urlStorage: &storage, log: logger}
+func NewURLService(storage postgres.URLStorage, logger *slog.Logger) UrlService {
+	return &urlService{urlStorage: storage, log: logger}
 }
 
 func (c *urlService) SaveURL(urlToSave string, alias string) error {

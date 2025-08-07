@@ -12,6 +12,7 @@ type UrlContoller struct {
 	urlService services.UrlService
 	log        *slog.Logger
 }
+
 type Request struct {
 	URLToSave string `json:"urlToSave"`
 	Alias     string `json:"alias"`

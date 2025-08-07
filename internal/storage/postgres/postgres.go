@@ -9,6 +9,14 @@ import (
 	"github.com/lib/pq"
 )
 
+type URLStorage interface {
+	SaveURL(urlToSave string, alias string) error
+	GetURL(alias string) (string, error)
+	DeleteURL(alias string) error
+}
+
+var _ URLStorage = (*Storage)(nil) // check if Storage implements URLStorage interface
+
 type Storage struct {
 	db *sql.DB
 }
