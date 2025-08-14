@@ -4,6 +4,7 @@ http_server:
   addres: "localhost:8080"
   timeout: 4s
   idle_timeout: 60s
+  user: "myuser"
 postgres_storage:
   host: "localhost"
   port: 5432

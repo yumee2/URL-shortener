@@ -1,16 +1,21 @@
 package routers
 
 import (
+	"url_shortener/internal/config"
 	"url_shortener/internal/http_server/controllers"
 
 	"github.com/gin-gonic/gin"
 )
 
-func SetupURLRoutes(r *gin.Engine, urlController controllers.UrlContoller) {
+func SetupURLRoutes(r *gin.Engine, urlController controllers.UrlContoller, cfg config.Config) {
 	urlGroup := r.Group("/url")
+
+	urlGroup.GET("/:alias", urlController.GetURL)
+	secured := urlGroup.Group("/", gin.BasicAuth(gin.Accounts{
+		cfg.HttpServer.User: cfg.HttpServer.Password,
+	}))
 	{
-		urlGroup.POST("/", urlController.SaveURL)
-		urlGroup.GET("/:alias", urlController.GetURL)
-		urlGroup.DELETE("/:alias", urlController.DeleteURL)
+		secured.POST("/", urlController.SaveURL)
+		secured.DELETE("/:alias", urlController.DeleteURL)
 	}
 }

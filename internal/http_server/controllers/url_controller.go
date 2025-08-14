@@ -3,6 +3,7 @@ package controllers
 import (
 	"errors"
 	"log/slog"
+	"net/http"
 	"url_shortener/internal/services"
 
 	"github.com/gin-gonic/gin"
@@ -93,9 +94,7 @@ func (c *urlContoller) GetURL(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, gin.H{
-		"originalURL": originalURL,
-	})
+	ctx.Redirect(http.StatusFound, originalURL)
 }
 
 func (c *urlContoller) DeleteURL(ctx *gin.Context) {

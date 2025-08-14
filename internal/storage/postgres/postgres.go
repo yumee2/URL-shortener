@@ -25,7 +25,7 @@ func New(cfg *config.Config) (*Storage, error) {
 	const fn = "storage.postgres.New"
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DatabaseName)
+		cfg.Host, cfg.Port, cfg.PostgresConnect.User, cfg.PostgresConnect.Password, cfg.DatabaseName)
 
 	db, err := sql.Open("postgres", psqlInfo)
 

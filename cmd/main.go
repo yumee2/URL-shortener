@@ -31,7 +31,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	r := setupRouter(*storage, log)
+	r := setupRouter(*storage, log, *cfg)
 	if err := r.Run(cfg.Addres); err != nil {
 		log.Error("Failed to start server:", slog.Attr{Key: "error", Value: slog.StringValue(err.Error())})
 	}
@@ -50,11 +50,11 @@ func createLogger(env string) *slog.Logger {
 	return log
 }
 
-func setupRouter(storage postgres.Storage, log *slog.Logger) *gin.Engine {
+func setupRouter(storage postgres.Storage, log *slog.Logger, cfg config.Config) *gin.Engine {
 	r := gin.Default()
 	urlService := services.NewURLService(&storage, log)
 	urlController := controllers.NewURLController(urlService, log)
 
-	routers.SetupURLRoutes(r, urlController)
+	routers.SetupURLRoutes(r, urlController, cfg)
 	return r
 }
