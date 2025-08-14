@@ -8,7 +8,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UrlContoller struct {
+type UrlContoller interface {
+	SaveURL(ctx *gin.Context)
+	GetURL(ctx *gin.Context)
+	DeleteURL(ctx *gin.Context)
+}
+
+type urlContoller struct {
 	urlService services.UrlService
 	log        *slog.Logger
 }
@@ -23,11 +29,11 @@ type Response struct {
 	Error  string `json:"error,omitempty"`
 }
 
-func NewURLController(urlService services.UrlService, logger *slog.Logger) *UrlContoller {
-	return &UrlContoller{urlService: urlService, log: logger}
+func NewURLController(urlService services.UrlService, logger *slog.Logger) *urlContoller {
+	return &urlContoller{urlService: urlService, log: logger}
 }
 
-func (c *UrlContoller) SaveURL(ctx *gin.Context) {
+func (c *urlContoller) SaveURL(ctx *gin.Context) {
 	const fn = "controllers.url_controller.SaveURL"
 
 	log := c.log.With(
@@ -61,7 +67,7 @@ func (c *UrlContoller) SaveURL(ctx *gin.Context) {
 	ctx.JSON(201, gin.H{"status": "OK"})
 }
 
-func (c *UrlContoller) GetURL(ctx *gin.Context) {
+func (c *urlContoller) GetURL(ctx *gin.Context) {
 	const fn = "controllers.url_controller.GetURL"
 
 	log := c.log.With(
@@ -92,7 +98,7 @@ func (c *UrlContoller) GetURL(ctx *gin.Context) {
 	})
 }
 
-func (c *UrlContoller) DeleteURL(ctx *gin.Context) {
+func (c *urlContoller) DeleteURL(ctx *gin.Context) {
 	const fn = "controllers.url_controller.DeleteURL"
 
 	log := c.log.With(
@@ -108,7 +114,7 @@ func (c *UrlContoller) DeleteURL(ctx *gin.Context) {
 
 	if err := c.urlService.DeleteURL(alias); err != nil {
 		log.Error("error trying to delete the alias", slog.String("alias", alias))
-		ctx.JSON(400, gin.H{"error": err})
+		ctx.JSON(400, gin.H{"error": "error during deletign the url"})
 		return
 	}
 

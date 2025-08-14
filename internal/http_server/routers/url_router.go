@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupURLRoutes(r *gin.Engine, urlController *controllers.UrlContoller) {
+func SetupURLRoutes(r *gin.Engine, urlController controllers.UrlContoller) {
 	urlGroup := r.Group("/url")
 	{
 		urlGroup.POST("/", urlController.SaveURL)

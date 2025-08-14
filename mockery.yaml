@@ -1,0 +1,5 @@
+with-expecter: true
+packages:
+  "internal/http_server/controllers":
+    interfaces: [UrlContoller]  
+    output: ./internal/http_server/controllers/mocks
